@@ -1,0 +1,145 @@
+ /*
+ * This file is part of Betaflight.
+ *
+ * Betaflight is free software. You can redistribute this software
+ * and/or modify this software under the terms of the GNU General
+ * Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * Betaflight is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * CORVON405DC - Dual Camera variant of CORVON405
+ *
+ * Based on CORVON405 (2025.12.2). The only hardware-level change is that
+ * MOTOR8 (PB9) is repurposed as PINIO1 to drive a 2-to-1 video MUX,
+ * switching between two cameras via the USER1 mode switch.
+ *
+ *   MOTOR8_PIN  (PB9)  ->  PINIO1_PIN  (GPIO, push-pull)
+ *
+ * PINIO1_CONFIG = 1   : normal logic  (low = cam A, high = cam B)
+ * PINIO1_BOX    = 40  : bound to USER1 (assign in BF Configurator > Modes)
+ *
+ * Result: 7 motor outputs remain (M1-M7).  If polarity is inverted on the
+ * actual hardware MUX, change PINIO1_CONFIG from 1 to 129.
+ */
+
+#pragma once
+
+#define FC_TARGET_MCU   STM32F405
+
+#define BOARD_NAME      CORVON405DC
+#define MANUFACTURER_ID CORV
+
+#define USE_ACC
+#define USE_ACC_SPI_ICM42688P
+#define USE_GYRO
+#define USE_GYRO_SPI_ICM42688P
+#define USE_BARO
+#define USE_BARO_SPI_DPS310
+#define USE_SDCARD
+#define USE_SDCARD_SPI
+#define USE_MAX7456
+#define USE_OSD
+#define USE_OSD_HD
+#define USE_OSD_SD
+#define USE_VTX
+#define USE_NONCOMPLIANT_SMARTAUDIO
+#define USE_MAG
+
+#define MOTOR1_PIN PB0
+#define MOTOR2_PIN PB1
+#define MOTOR3_PIN PA15
+#define MOTOR4_PIN PB3
+#define MOTOR5_PIN PB4
+#define MOTOR6_PIN PB5
+#define MOTOR7_PIN PB8
+// MOTOR8_PIN (PB9) repurposed as PINIO1 for dual camera switch (see below)
+
+#define UART1_TX_PIN PA9
+#define UART2_TX_PIN PA2
+#define UART3_TX_PIN PB10
+#define UART4_TX_PIN PA0
+#define UART6_TX_PIN PC6
+#define UART1_RX_PIN PA10
+#define UART2_RX_PIN PA3
+#define UART3_RX_PIN PB11
+#define UART4_RX_PIN PA1
+#define UART5_RX_PIN PD2
+#define UART6_RX_PIN PC7
+#define INVERTER_PIN_UART6 PC15
+
+#define I2C1_SCL_PIN PB6
+#define I2C1_SDA_PIN PB7
+
+#define SPI1_SCK_PIN PA5
+#define SPI2_SCK_PIN PB13
+#define SPI3_SCK_PIN PC10
+#define SPI1_SDI_PIN PA6
+#define SPI2_SDI_PIN PC2
+#define SPI3_SDI_PIN PC11
+#define SPI1_SDO_PIN PA7
+#define SPI2_SDO_PIN PC3
+#define SPI3_SDO_PIN PC12
+
+#define ADC_VBAT_PIN PC0
+#define ADC_CURR_PIN PC1
+
+#define LED0_PIN           PA8
+#define LED1_PIN           PC4
+#define LED2_PIN           PC5
+#define BEEPER_PIN         PB14
+#define BEEPER_INVERTED
+#define BARO_CS_PIN        PA4
+#define GYRO_1_CS_PIN      PC8
+#define SDCARD_SPI_CS_PIN  PC9
+#define MAX7456_SPI_CS_PIN PB12
+
+// --- Dual camera switch (replaces MOTOR8) ---
+#define PINIO1_PIN         PB9
+#define PINIO1_CONFIG      1
+#define PINIO1_BOX         40
+
+#define TIMER_PIN_MAPPING \
+    TIMER_PIN_MAP( 0, MOTOR1_PIN, 2,  0 ) \
+    TIMER_PIN_MAP( 1, MOTOR2_PIN, 2,  0 ) \
+    TIMER_PIN_MAP( 2, MOTOR3_PIN, 1,  0 ) \
+    TIMER_PIN_MAP( 3, MOTOR4_PIN, 1,  0 ) \
+    TIMER_PIN_MAP( 4, MOTOR5_PIN, 1,  0 ) \
+    TIMER_PIN_MAP( 5, MOTOR6_PIN, 1,  0 ) \
+    TIMER_PIN_MAP( 6, MOTOR7_PIN, 1,  0 )
+
+#define ADC1_DMA_OPT 1
+
+#define ADC_INSTANCE          ADC1
+#define BARO_SPI_INSTANCE     SPI2
+#define GYRO_1_SPI_INSTANCE   SPI2
+#define SDCARD_SPI_INSTANCE   SPI3
+#define MAX7456_SPI_INSTANCE  SPI1
+#define MAG_I2C_INSTANCE      I2CDEV_1
+#define GYRO_1_ALIGN          CW180_DEG
+
+#define SYSTEM_HSE_MHZ 8
+#define DEFAULT_DSHOT_BURST          DSHOT_DMAR_ON
+#define DEFAULT_BLACKBOX_DEVICE      BLACKBOX_DEVICE_SDCARD
+#define DEFAULT_VOLTAGE_METER_SOURCE VOLTAGE_METER_ADC
+#define DEFAULT_VOLTAGE_METER_SCALE  210
+#define DEFAULT_CURRENT_METER_SOURCE CURRENT_METER_ADC
+#define DEFAULT_CURRENT_METER_SCALE  402
+
+#define MSP_UART             SERIAL_PORT_USART1
+#define MSP_DISPLAYPORT_UART SERIAL_PORT_USART2
+#define GPS_UART             SERIAL_PORT_USART3
+#define ESC_SENSOR_UART      SERIAL_PORT_UART5
+#define SERIALRX_UART        SERIAL_PORT_USART6
