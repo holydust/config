@@ -9,7 +9,7 @@
 
 // --- Board & Manufacturer Info ---
 #define BOARD_NAME      CORVON405V3
-#define MANUFACTURER_ID CORN
+#define MANUFACTURER_ID CORV
 
 // --- Accelerometer & Gyro ---
 #define USE_ACC
