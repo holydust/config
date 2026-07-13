@@ -42,6 +42,12 @@
 #define USE_NONCOMPLIANT_SMARTAUDIO
 #define USE_MAG
 
+// Analog camera OSD joystick emulation; no default pin, assign via
+// CLI: resource camera_control 1 <pin>
+#ifndef USE_CAMERA_CONTROL
+#define USE_CAMERA_CONTROL
+#endif
+
 #define MOTOR1_PIN PB0
 #define MOTOR2_PIN PB1
 #define MOTOR3_PIN PA15
